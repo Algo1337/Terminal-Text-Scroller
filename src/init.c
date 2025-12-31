@@ -12,7 +12,7 @@ void init_screen(screen *s, int rows, int cols)
 
     if(rows == AUTO_FULL_SCREEN && cols == AUTO_FULL_SCREEN)
     {
-        // Get Size Screen
+        get_screen_size(&s->length, &s->width);
         return;
     }
 
