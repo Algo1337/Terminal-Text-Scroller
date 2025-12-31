@@ -1,23 +1,23 @@
 #include "init.h"
 
-#define AUTO_FULL_SCREEN -1
 /* -1, -1 */
-void init_screen(screen *s, int rows, int cols)
+int init_screen(screen *s, int rows, int cols)
 {
     if(rows == 0 || cols == 0)
     {
         printf("[ x ] Error, Invalid size provided....!\n");
-        return;
+        return 0;
     }
 
     if(rows == AUTO_FULL_SCREEN && cols == AUTO_FULL_SCREEN)
     {
         get_screen_size(&s->length, &s->width);
-        return;
+        return 1;
     }
 
     s->length = rows;
     s->width = cols;
+    return 1;
 }
 
 void start_display(screen *s, char *data)

@@ -10,11 +10,16 @@ int main(int argc, char *argv[])
 
     printf("[ + ] Reading file: %s....\n", argv[1]);
     char *data = read_file(argv[1]);
-    int rows, cols;
-    get_screen_size(&rows, &cols);
 
     screen s = {0};
-    init_screen(&s, rows, cols);
+    int chk = init_screen(&s, AUTO_FULL_SCREEN, AUTO_FULL_SCREEN);
+    if(!chk)
+        return 1;
+
+    char *data = read_file(argv[1]);
+    if(!data)
+        return 1;
+
     start_display(&s, data);
 
     enable_raw();

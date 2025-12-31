@@ -8,6 +8,8 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 
+#define AUTO_FULL_SCREEN -1
+
 typedef struct {
     int     x, y;
 } _cor;
@@ -32,7 +34,7 @@ typedef struct {
 static struct termios old;
 
 // init.c
-void init_screen(screen *s, int row, int col);
+int init_screen(screen *s, int row, int col);
 void start_display(screen *s, char *data);
 void clear();
 void display_up(screen *s);
