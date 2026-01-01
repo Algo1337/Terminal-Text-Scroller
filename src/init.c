@@ -103,19 +103,19 @@ void display_up_page(screen *s)
 
 void display_down_page(screen *s)
 {
-    if(s->top_view_line > s->line_count)
+    if(s->top_view_line >= s->line_count)
         return;
 
-    if(s->top_view_line + s->length > s->line_count)
+    if(s->top_view_line + s->length - 1 >= s->line_count)
     {
-        for(int i = s->line_count - s->length; i < s->length; i++)
+        for(int i = s->line_count - s->length; i < s->length; i++) {
+			if(!s->lines[i]) break;
             printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
+		}
 
-                s->top_view_line = s->line_count;
+        s->top_view_line = s->line_count;
         return;
     }
-
-    s->top_view_line++;
 
     clear();
     for(int i = 0, c = s->top_view_line + s->length - 1; i < s->length; i++, c++) {

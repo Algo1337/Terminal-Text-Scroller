@@ -1,7 +1,7 @@
 #include "init.h"
 
 void get_screen_size(int *rows, int *cols)
-{   
+{
     struct winsize w;
 
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
