@@ -20,7 +20,7 @@ int init_screen(screen *s, int rows, int cols)
     return 1;
 }
 
-void start_display(screen *s, char *data)
+void start_display(screen *s, char *data, int output)
 {
     s->content = strdup(data);
     //s->lines = __split(data, "\n", &s->line_count);
@@ -32,7 +32,7 @@ void start_display(screen *s, char *data)
 
     for(int i = 0; i < s->length; i++) {
         if(!s->lines[i]) break;
-        printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", 
+        if(output) printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", 
             s->nums, 
             i, 
             s->lines[i]

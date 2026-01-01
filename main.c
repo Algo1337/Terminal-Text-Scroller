@@ -6,8 +6,8 @@ typedef __int8_t *Box;
 
 typedef struct
 {
-	pos_t   cursor;
 	pos_t	size;
+	_edges 	position;
 
 	Box		content;
 	int 	length;

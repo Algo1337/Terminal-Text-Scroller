@@ -14,6 +14,10 @@ typedef struct {
     int     x, y;
 } _cor;
 
+typedef struct {
+	int top, left, right, bottom;
+} _edges;
+
 typedef _cor srl_t;
 typedef _cor pos_t;
 
@@ -35,7 +39,7 @@ static struct termios old;
 
 // init.c
 int init_screen(screen *s, int row, int col);
-void start_display(screen *s, char *data);
+void start_display(screen *s, char *data, int output);
 void clear();
 void display_up(screen *s);
 void display_down(screen *s);
