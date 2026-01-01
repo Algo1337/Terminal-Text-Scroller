@@ -41,10 +41,10 @@ static struct termios old;
 int init_screen(screen *s, int row, int col);
 void start_display(screen *s, char *data, int output);
 void clear();
-void display_up(screen *s);
-void display_down(screen *s);
-void display_up_page(screen *s);
-void display_down_page(screen *s);
+void display_up(screen *s, int output);
+void display_down(screen *s, int output);
+void display_up_page(screen *s, int output);
+void display_down_page(screen *s, int output);
 
 // utils.c
 void get_screen_size(int *rows, int *cols);

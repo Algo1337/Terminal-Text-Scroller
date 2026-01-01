@@ -42,11 +42,11 @@ void start_display(screen *s, char *data, int output)
 
 void clear() { printf("\x1b[2J\033[1;1H"); }
 
-void display_up(screen *s)
+void display_up(screen *s, int output)
 {
     if(s->top_view_line == 0 || s->top_view_line == 1) {
         clear();
-        for(int i = 0; i < s->length; i++) printf( i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
+        for(int i = 0; i < s->length; i++) if(output) printf( i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
 
         s->top_view_line = 0;
         return;
@@ -57,16 +57,16 @@ void display_up(screen *s)
     clear();
     for(int i = 0, c = s->top_view_line; i < s->length; i++, c++) {
         if(!s->lines[c]) break;
-        printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, c, s->lines[c]);
+        if(output) printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, c, s->lines[c]);
     }
 }
 
-void display_down(screen *s)
+void display_down(screen *s, int output)
 {
     if(s->top_view_line + s->length > s->line_count)
     {
         for(int i = s->line_count - s->length; i < s->length; i++)
-            printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
+            if(output) printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
 
         return;
     }
@@ -76,15 +76,15 @@ void display_down(screen *s)
     clear();
     for(int i = 0, c = s->top_view_line; i < s->length; i++, c++) {
         if(!s->lines[c]) break;
-        printf(i == s->length - 1 ? "[%*d] %s": "[%*d] %s\n", s->nums, c, s->lines[c]);
+        if(output) printf(i == s->length - 1 ? "[%*d] %s": "[%*d] %s\n", s->nums, c, s->lines[c]);
     }
 }
 
-void display_up_page(screen *s)
+void display_up_page(screen *s, int output)
 {
     if(s->top_view_line == 0 || s->top_view_line == 1 || s->top_view_line - s->length <= 0) {
         clear();
-        for(int i = 0; i < s->length; i++) printf( i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
+        for(int i = 0; i < s->length; i++) if(output) printf( i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
 
         s->top_view_line = 0;
         return;
@@ -95,13 +95,13 @@ void display_up_page(screen *s)
     clear();
     for(int i = 0, c = s->top_view_line - s->length; i < s->length; i++, c++) {
         if(!s->lines[c]) break;
-        printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, c, s->lines[c]);
+        if(output) printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, c, s->lines[c]);
     }
 
     s->top_view_line -= s->length;
 }
 
-void display_down_page(screen *s)
+void display_down_page(screen *s, int output)
 {
     if(s->top_view_line >= s->line_count)
         return;
@@ -110,7 +110,7 @@ void display_down_page(screen *s)
     {
         for(int i = s->line_count - s->length; i < s->length; i++) {
 			if(!s->lines[i]) break;
-            printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
+            if(output) printf(i == s->length - 1 ? "[%*d] %s" : "[%*d] %s\n", s->nums, i, s->lines[i]);
 		}
 
         s->top_view_line = s->line_count;
@@ -120,7 +120,7 @@ void display_down_page(screen *s)
     clear();
     for(int i = 0, c = s->top_view_line + s->length - 1; i < s->length; i++, c++) {
         if(!s->lines[c]) break;
-        printf(i == s->length - 1 ? "[%*d] %s": "[%*d] %s\n", s->nums, c, s->lines[c]);
+        if(output) printf(i == s->length - 1 ? "[%*d] %s": "[%*d] %s\n", s->nums, c, s->lines[c]);
     }
 
     s->top_view_line += s->length;

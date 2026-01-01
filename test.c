@@ -70,13 +70,11 @@ int place_text(_screen *s, char *data, int col, int row)
         if(line_count == 0)
         	return 0;
 
-		printf("%d;%d -> %d\n", col, row, line_count);
         for(int i = row, idx = 0; idx < line_count; idx++, i++)
         {
         	int len = strlen(lines[idx]);
-            for(int c = 0, n = col; c < len; c++, n++) {
+            for(int c = 0, n = col; c < len; c++, n++)
             	s->lines[i][n] = lines[idx][c];
-			}
         }
 
         return 1;
@@ -137,11 +135,11 @@ int main(int argc, char *argv[])
 	screen s = {0};
 	init_screen(&s, cols / 2, rows / 2);
 
-	char *t = read_file("t.txt");
+	char *t = read_file("test.c");
 	start_display(&s, t, 0);
 
 	place_text(&scr, "[ System Info ]", 18, 1);
-	for(int i = 0; i < s.line_count; i++) {
+	for(int i = 0; i < 8; i++) {
 		place_text(&scr, "> ", 5, i + 5);
 		place_text(&scr, s.lines[i], 8, i + 5);
 	}
@@ -171,14 +169,28 @@ int main(int argc, char *argv[])
 
         if(c == 'w')
         {
-			place_text(&scr, ">", last_pos.x - 1, 1);
-			last_pos.x--;
+//			place_text(&scr, ">", last_pos.x - 1, 1);
+//			last_pos.x--;
+			display_up(&s, 0);
+			for(int i = 0, c = s.top_view_line; i < rows; i++, c++)
+				place_text(&scr, s.lines[c], 8, i + 5);
+
+			clear();
+			for(int i = 0; i < scr.length; i++)
+				printf(i == rows - 1 ? "%s" : "%s\n", scr.lines[i]);
         }
 
         if(c == 's')
         {
-			place_text(&scr, ">", last_pos.x + 1, 1);
-			last_pos.x++;
+//			place_text(&scr, ">", last_pos.x + 1, 1);
+//			last_pos.x++;
+			display_down(&s, 0);
+			for(int i = 0, c = s.top_view_line; i < s.length; i++, c++)
+				place_text(&scr, s.lines[c], 8, i + 5);
+
+			clear();
+			for(int i = 0; i < scr.length; i++)
+				printf(i == rows - 1 ? "%s" : "%s\n", scr.lines[i]);
         }
     }
 

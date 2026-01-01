@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
 	place_text(&scr, "TEXT", 3, 4);
 	for(int i = 0; i < scr.length; i++)
 		printf("'%s'\n", scr.lines[i]);
+
 	return 1;
     if(argc < 2)
     {
