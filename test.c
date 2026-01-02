@@ -1,11 +1,12 @@
 #include "src/init.h"
 
+#include <stddef.h>
+
 typedef __int8_t *str;
 typedef __int8_t **str_arr;
 typedef __int8_t *Box;
-typedef __int8_t *Shapes;
-typedef __int8_t shape_t;
-typedef __int32_t counter_t;
+typedef __int64_t *Shapes;
+typedef __int64_t counter_t;
 
 typedef struct
 {
@@ -16,12 +17,16 @@ typedef struct
     int    		length;
 } _shape;
 
+typedef _shape *shape_t;
+
 /*
 	Box main_box = create_box(10, 10);
 	shape_t *main_box_t = __GET_SHAPE__(main_box);
 */
-#define _SHAPE_STRUCT_OFFSET_ sizeof(_pos) + sizeof(_edges)
-#define __GET_SHAPE__(p) ((char *)p) - _SHAPE_STRUCT_OFFSET_
+#define _SHAPE_STRUCT_OFFSET_ sizeof(_shape) - (sizeof(int) * 6)
+#define __GET_SHAPE__(p) \
+    ((shape_t)((char *)(p) - offsetof(_shape, size)))
+
 #define __FREE_SHAPE__(p) \
 	shape_t n = __GET_SHAPE__(p); \
 	memset(n->content, 0, n->length); \
@@ -77,12 +82,14 @@ int place_text(_screen *s, char *data, int col, int row)
             	s->lines[i][n] = lines[idx][c];
         }
 
+        free_arr((void *)lines);
         return 1;
 	}
 
     int len = strlen(data);
-    for(int i = col, c = 0; c < len; i++)
-    	s->lines[row][i] = data[c++];
+    for(int i = 0, c = col; i < len; i++, c++) {
+    	s->lines[row][c] = data[i];
+    }
 
     return 1;
 }
@@ -120,38 +127,38 @@ int main(int argc, char *argv[])
 	int rows, cols;
 	get_screen_size(&rows, &cols);
 
-	Box screen_box = create_box(cols - 2, rows);
-
+    /* Initialize main screen */
     _screen scr = create_screen(cols, rows);
+
+    /* Initialize screen layout */
+	Box screen_box = create_box(cols - 2, rows);
 	place_text(&scr, screen_box, 0, 0);
 
-    Box box = create_box(46, 20);
-    Box nbox = create_box(15, 20);
+    /* Create and place to boxes */
+    int box_text_start = 4;
+    Box box = create_box((cols / 2) - 5, (rows / 2) - 3);
+    
+    place_text(&scr, box, 2, 2);
+    place_text(&scr, box, (cols / 2) + 1, 2);
+    place_text(&scr, box, 2, (rows / 2) + 2);
+    place_text(&scr, box, (cols / 2) + 1, (rows / 2) + 2);
 
-    place_text(&scr, box, 2, 3);
-    place_text(&scr, nbox, 52, 3);
-    place_text(&scr, "TEXT", 55, 5);
 
-	screen s = {0};
-	init_screen(&s, cols / 2, rows / 2);
+	char *t = read_file("t.txt");
+    int line_count;
+    char **lines = split_lines(t, &line_count);
 
-	char *t = read_file("test.c");
-	start_display(&s, t, 0);
-
-	place_text(&scr, "[ System Info ]", 18, 1);
-	for(int i = 0; i < 8; i++) {
-		place_text(&scr, "> ", 5, i + 5);
-		place_text(&scr, s.lines[i], 8, i + 5);
-	}
+    place_text(&scr, "Multi-Screening", (cols / 2) - (strlen("Multi-Screening") / 2), 1);
+	place_text(&scr, "[ System Info ]", 18, 4);
+    
+    for(int i = 0, row = 6; i < line_count; i++, row++)
+        place_text(&scr, lines[i], 4, row);
 
     for(int i = 0; i < scr.length; i++)
 	    printf(i == rows - 1 ? "%s" : "%s\n", scr.lines[i]);
 
-	pos_t last_pos = {0, 1};
-//	place_text(&scr, ">", 0, 1);
     enable_raw();
     int c;
-    fflush(stdin);
     while(c = getc(stdin))
     {
         if(c == -1 || c == 0)
@@ -169,28 +176,12 @@ int main(int argc, char *argv[])
 
         if(c == 'w')
         {
-//			place_text(&scr, ">", last_pos.x - 1, 1);
-//			last_pos.x--;
-			display_up(&s, 0);
-			for(int i = 0, c = s.top_view_line; i < rows; i++, c++)
-				place_text(&scr, s.lines[c], 8, i + 5);
-
-			clear();
-			for(int i = 0; i < scr.length; i++)
-				printf(i == rows - 1 ? "%s" : "%s\n", scr.lines[i]);
+            
         }
 
         if(c == 's')
         {
-//			place_text(&scr, ">", last_pos.x + 1, 1);
-//			last_pos.x++;
-			display_down(&s, 0);
-			for(int i = 0, c = s.top_view_line; i < s.length; i++, c++)
-				place_text(&scr, s.lines[c], 8, i + 5);
 
-			clear();
-			for(int i = 0; i < scr.length; i++)
-				printf(i == rows - 1 ? "%s" : "%s\n", scr.lines[i]);
         }
     }
 
