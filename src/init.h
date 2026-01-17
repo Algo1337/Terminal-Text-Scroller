@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <clibp_gcc.h>
 
 #define AUTO_FULL_SCREEN -1
 
